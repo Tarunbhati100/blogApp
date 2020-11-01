@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1073611413790",
+    "firebase_url": "https://blogapp-d6ec4.firebaseio.com",
+    "project_id": "blogapp-d6ec4",
+    "storage_bucket": "blogapp-d6ec4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073611413790:android:9d5de571665748f9ee910f",
+        "android_client_info": {
+          "package_name": "co.tarun_bhati.blog_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073611413790-rad3mr40hs64ndpg385sgqo4c5m9gnqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnXC6snKvhBU7AAqswf7EgQyGATmv8Y8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073611413790-rad3mr40hs64ndpg385sgqo4c5m9gnqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
