@@ -1,16 +1,18 @@
-import 'package:blog_app/home_Screen.dart';
+import 'package:blog_app/Services/auth.dart';
+import 'package:blog_app/Screens/home_Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class AuthScreen extends StatefulWidget {
+  static final String authscreen = 'authScreen';
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final _auth = FirebaseAuth.instance;
-  bool isregistered = false;
+  final AuthServices _auth = AuthServices();
+  bool isNew = false;
   bool isloading = false;
   String emailid;
   String password;
@@ -66,12 +68,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           obscureText: true,
-                          validator: isregistered?(val) {
-                            if (val.length < 6) {
-                              return "Password must contain atleast 6 characters.";
-                            }
-                            return null;
-                          }:(val)=>null,
+                          validator: isNew
+                              ? (val) {
+                                  if (val.length < 6) {
+                                    return "Password must contain atleast 6 characters.";
+                                  }
+                                  return null;
+                                }
+                              : (val) => null,
                           decoration: InputDecoration(
                             hintText: "Enter Password",
                             labelText: "Enter Password",
@@ -90,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         SizedBox(
                           height: 20,
                         ),
-                        isregistered
+                        isNew
                             ? TextFormField(
                                 keyboardType: TextInputType.visiblePassword,
                                 obscureText: true,
@@ -126,31 +130,22 @@ class _AuthScreenState extends State<AuthScreen> {
                                 });
                                 try {
                                   if (_formKey.currentState.validate()) {
-                                    final newUser = isregistered
+                                    final newUser = isNew
                                         ? await _auth
-                                            .createUserWithEmailAndPassword(
-                                                email: emailid,
-                                                password: password)
+                                            .registerWithEmailAndPassword(
+                                                emailid, password)
                                         : await _auth
                                             .signInWithEmailAndPassword(
-                                                email: emailid,
-                                                password: password);
+                                                emailid, password);
                                     if (newUser != null) {
                                       Navigator.of(context)
                                           .pushReplacementNamed(
                                               HomeScreen.home);
                                     }
                                   }
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'weak-password') {
-                                    print('The password provided is too weak.');
-                                  } else if (e.code == 'email-already-in-use') {
-                                    Scaffold.of(context).showSnackBar(SnackBar(
-                                        content: Text(
-                                            'The account already exists for that email.')));
-                                  }
                                 } catch (e) {
-                                  print(e);
+                                  Scaffold.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.code)));
                                 } finally {
                                   setState(() {
                                     isloading = false;
@@ -158,7 +153,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 }
                               },
                               child: Text(
-                                isregistered ? 'SignUp' : 'Log In',
+                                isNew ? 'SignUp' : 'Log In',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
@@ -167,10 +162,10 @@ class _AuthScreenState extends State<AuthScreen> {
                             FlatButton(
                               onPressed: () {
                                 setState(() {
-                                  isregistered = isregistered ? false : true;
+                                  isNew = isNew ? false : true;
                                 });
                               },
-                              child: Text(isregistered
+                              child: Text(isNew
                                   ? "Already Exist/SignIn"
                                   : "New User/SignUp"),
                             ),

@@ -2,12 +2,12 @@ import 'package:blog_app/content.dart';
 import 'package:flutter/material.dart';
 
 class UpdateScreen extends StatelessWidget {
-  final int index;
+  final String id;
   final String title;
   final String content;
   static final String updateScreen = 'UpdateScreen';
 
-  UpdateScreen({this.index,this.title,this.content});
+  UpdateScreen({this.id,this.title,this.content});
   
   @override 
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class UpdateScreen extends StatelessWidget {
         title: Text("UPDATE DATA"),
         backgroundColor: Colors.teal,
       ),
-      body: Add_Update(index,title,content),
+      body: Add_Update(id,title,content),
     );
   }
 }

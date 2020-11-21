@@ -1,24 +1,21 @@
-import 'package:blog_app/update.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:blog_app/Screens/update.dart';
+import 'package:blog_app/Services/auth.dart';
+import 'package:blog_app/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-final _firestore = FirebaseFirestore.instance;
-
-List<Blog> blogdata = [];
 
 class Blog {
   String title;
   String data;
-  Blog({this.title, this.data});
+  String id;
+  Blog({this.id,this.title, this.data});
 }
 
 class Blogwidget extends StatelessWidget {
-  final int index;
+  final String id;
   final String title;
   final String content;
-  Blogwidget({this.index, this.content, this.title});
+  Blogwidget({this.id, this.content, this.title});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +40,7 @@ class Blogwidget extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => UpdateScreen(
-                          index: index, title: title, content: content)));
+                          id: id, title: title, content: content)));
                 },
                 child: Icon(
                   Icons.edit,
@@ -71,30 +68,16 @@ class Blogwidget extends StatelessWidget {
 }
 
 class Add_Update extends StatelessWidget {
-  int index;
+  String id;
   String title;
   String content;
-  final _auth = FirebaseAuth.instance;
-  User loggedInUser;
-
-  Add_Update(this.index, this.title, this.content);
-
-  void getCurrentUser() {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser.email);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  final _auth = AuthServices();
+  final DatabaseServices _firestore = DatabaseServices();
+  Add_Update(this.id, this.title, this.content);
 
   @override
   Widget build(BuildContext context) {
     // print(content);
-    getCurrentUser();
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -154,19 +137,13 @@ class Add_Update extends StatelessWidget {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      if (title != null && content != null) if (index == null) {
-                        blogdata.add(Blog(
-                          title: title,
-                          data: content,
-                        ));
-                        _firestore.collection('blogs').add({
-                          'title': title,
-                          'data': content,
-                          'sender': loggedInUser.email
-                        });
+                      if (title != null && content != null) 
+                      if (id == null) {
+                        _firestore.addData(title,content,_auth.getCurrentUser().email);
                       } else {
-                        blogdata[index].title = title;
-                        blogdata[index].data = content;
+                        _firestore.updateUserData(id,title,content);
+                        // blogdata[index].title = title;
+                        // blogdata[index].data = content;
                       }
                       Navigator.of(context).pop();
                     },

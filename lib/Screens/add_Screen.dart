@@ -1,7 +1,7 @@
 import 'package:blog_app/content.dart';
 import 'package:flutter/material.dart';
 
-int index;
+String id;
 String title;
 String content;
 
@@ -15,7 +15,7 @@ static final String addScreen = 'AddScreen';
         title: Text("ADD DATA"),
         backgroundColor: Colors.teal,
       ),
-      body: Add_Update(index,title,content),
+      body: Add_Update(id,title,content),
     );
   }
 }
