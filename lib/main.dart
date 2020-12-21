@@ -20,13 +20,17 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
       value: AuthServices().user,
       child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'PatrickHand',
+        ),
         title: 'Blog App',
         routes: {
-          '/':(BuildContext context)=>Wrapper(),
+          '/': (BuildContext context) => Wrapper(),
           AuthScreen.authscreen: (BuildContext context) => AuthScreen(),
           HomeScreen.home: (BuildContext context) => HomeScreen(),
           AddScreen.addScreen: (BuildContext context) => AddScreen(),
-        },),
+        },
+      ),
     );
   }
 }

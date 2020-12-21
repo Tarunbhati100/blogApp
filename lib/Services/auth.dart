@@ -24,8 +24,7 @@ class AuthServices{
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       return result;
     } catch (error) {
-      print(error.toString());
-      return null;
+      throw error;
     } 
   }
 
@@ -34,8 +33,7 @@ class AuthServices{
       final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return result;
     } catch (error) {
-      print(error.toString());
-      return null;
+      throw error;
     }
   }
 

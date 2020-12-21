@@ -1,6 +1,7 @@
 import 'package:blog_app/Services/auth.dart';
 import 'package:blog_app/Screens/home_Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -12,6 +13,8 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final AuthServices _auth = AuthServices();
+  bool _showPassword = false;
+  bool _showConfirmPassword = false;
   bool isNew = false;
   bool isloading = false;
   String emailid;
@@ -34,19 +37,27 @@ class _AuthScreenState extends State<AuthScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  'Blog App',
+                  'BLOG APP',
                   style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
-                      letterSpacing: 2),
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal,
+                    letterSpacing: 2,
+                  ),
                 ),
                 Form(
                     key: _formKey,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "Please Enter your email.";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             hintText: "Your Email Address",
                             labelText: "Your Email Address",
@@ -67,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         TextFormField(
                           keyboardType: TextInputType.visiblePassword,
-                          obscureText: true,
+                          obscureText: !_showPassword,
                           validator: isNew
                               ? (val) {
                                   if (val.length < 6) {
@@ -86,6 +97,16 @@ class _AuthScreenState extends State<AuthScreen> {
                                   style: BorderStyle.solid,
                                   width: 2),
                             ),
+                            suffixIcon: IconButton(
+                              icon: _showPassword
+                                  ? Icon(Icons.remove_red_eye)
+                                  : Icon(Icons.remove_red_eye_outlined),
+                              onPressed: () {
+                                setState(() {
+                                  _showPassword = !_showPassword;
+                                });
+                              },
+                            ),
                           ),
                           onChanged: (pass) {
                             password = pass;
@@ -97,7 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         isNew
                             ? TextFormField(
                                 keyboardType: TextInputType.visiblePassword,
-                                obscureText: true,
+                                obscureText: !_showConfirmPassword,
                                 validator: (val) {
                                   if (val != password) {
                                     return "Passwords don't match";
@@ -113,6 +134,17 @@ class _AuthScreenState extends State<AuthScreen> {
                                         color: Colors.teal,
                                         style: BorderStyle.solid,
                                         width: 2),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: _showConfirmPassword
+                                        ? Icon(Icons.remove_red_eye)
+                                        : Icon(Icons.remove_red_eye_outlined),
+                                    onPressed: () {
+                                      setState(() {
+                                        _showConfirmPassword =
+                                            !_showConfirmPassword;
+                                      });
+                                    },
                                   ),
                                 ),
                                 onChanged: null,
@@ -144,8 +176,13 @@ class _AuthScreenState extends State<AuthScreen> {
                                     }
                                   }
                                 } catch (e) {
-                                  Scaffold.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.code)));
+                                  Flushbar(
+                                    icon: Icon(Icons.error_outline,
+                                        color: Colors.red),
+                                    flushbarPosition: FlushbarPosition.TOP,
+                                    message: e.message,
+                                    duration: Duration(seconds: 3),
+                                  ).show(context);
                                 } finally {
                                   setState(() {
                                     isloading = false;

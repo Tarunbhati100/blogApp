@@ -1,5 +1,6 @@
 import 'package:blog_app/DraggableList.dart';
 import 'package:blog_app/Screens/add_Screen.dart';
+import 'package:blog_app/Screens/auth_screen.dart';
 import 'package:blog_app/Services/auth.dart';
 import 'package:blog_app/Services/database.dart';
 import 'package:flutter/material.dart';
@@ -30,66 +31,60 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return StreamProvider<List<Blog>>.value(
       value: DatabaseServices().blogs,
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(
-                  top: 20,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    FlatButton(
-                      onPressed: () async{
-                        await _auth.signOut();
-                      },
-                      child: Icon(
-                        Icons.exit_to_app,
-                        color: Colors.red,
-                        size: MediaQuery.of(context).size.width*0.2,
-                      ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        "Blog App",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 40
-                        ),
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AddScreen.addScreen);
-                      },
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.limeAccent,
-                        size: MediaQuery.of(context).size.width*0.15,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(
-                color: Colors.white,
-                thickness: 1,
-              ),
-              Expanded(
-                child: Container(
-                  child: SvgPicture.asset("./assets/logo.svg"),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
-              )
-            ],
+      child: Scaffold(
+        backgroundColor: Colors.teal,
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.yellow,
+            ),
+            onPressed: () async {
+              await _auth.signOut();
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => AuthScreen()));
+            },
           ),
-          DraggableList(),
-        ],
+          title: Text(
+            "BLOG APP",
+            style: TextStyle(
+              color: Colors.white,
+              // fontWeight: FontWeight.bold,
+              fontSize: MediaQuery.of(context).size.width * 0.1,
+            ),
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(AddScreen.addScreen);
+              },
+              icon: Icon(
+                Icons.add,
+                color: Colors.purple,
+              ),
+            ),
+          ],
+        ),
+        body: Stack(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    child: SvgPicture.asset("./assets/logo.svg"),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                )
+              ],
+            ),
+            DraggableList(),
+          ],
+        ),
       ),
     );
   }
